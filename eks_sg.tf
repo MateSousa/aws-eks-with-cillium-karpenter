@@ -1,5 +1,5 @@
 resource "aws_security_group" "eks_cluster_sg" {
-  vpc_id = var.vpc.id
+  vpc_id = aws_vpc.vpc.id
 
   egress {
     from_port   = 0
@@ -16,6 +16,7 @@ resource "aws_security_group" "eks_cluster_sg" {
   }
 
   tags = {
-    Name = "eks-cluster-sg"
+    Name                     = "${var.eks.name}-cluster-sg"
+    "karpenter.sh/discovery" = var.eks.name
   }
 }

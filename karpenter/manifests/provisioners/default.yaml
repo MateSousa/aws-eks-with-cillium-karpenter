@@ -1,0 +1,20 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default-test
+spec:
+  amiFamily: AL2023
+  role: "${cluster_name}-karpenter-node-role"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: ${cluster_name}
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: ${cluster_name}
+  tags:
+    karpenter.sh/discovery: ${cluster_name}
+  amiSelectorTerms:
+    # Select on any AMI that has both the `karpenter.sh/discovery: ${cluster_name}`
+    # AND `environment: test` tags OR any AMI with the name `my-ami` OR an AMI with
+    # ID `ami-123`
+    - alias: al2023@v20241225

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "eks_cluster_role" {
-  name = "eks-cluster-role"
+  name = "${var.eks.name}-eks-cluster-role"
 
   assume_role_policy = <<EOF
 {
@@ -23,7 +23,7 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_policy_attachment" {
 }
 
 resource "aws_iam_role" "eks_node_role" {
-  name = "eks-node-role"
+  name = "${var.eks.name}-eks-node-role"
 
   assume_role_policy = <<EOF
 {
@@ -55,4 +55,5 @@ resource "aws_iam_role_policy_attachment" "eks_ec2_container_registry_read_only_
   role       = aws_iam_role.eks_node_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
+
 

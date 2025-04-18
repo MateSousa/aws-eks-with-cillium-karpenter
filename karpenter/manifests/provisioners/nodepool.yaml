@@ -1,0 +1,48 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  template:
+    metadata:
+      labels:
+        billing-team: my-team
+      annotations:
+        example.com/owner: "my-team"
+    disruption:
+      consolidationPolicy: WhenEmptyOrUnderutilized
+    spec:
+      startupTaints:
+        - key: "node.cilium.io/agent-not-ready"
+          value: "true"
+          effect: "NoExecute"
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default-test
+      terminationGracePeriod: 48h
+      requirements:
+        # Allow a broader range of CPU options, which will help match common instance types.
+        - key: "karpenter.k8s.aws/instance-cpu"
+          operator: In
+          values: ["2", "4", "8", "16"]
+        # Ensure that only Nitro-based instances are considered.
+        - key: "karpenter.k8s.aws/instance-hypervisor"
+          operator: In
+          values: ["nitro"]
+        # Expand the allowed availability zones if needed.
+        - key: "topology.kubernetes.io/zone"
+          operator: In
+          values: ["us-east-1a", "us-east-1b", "us-east-1c"]
+        # Limit to the most common architecture.
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+        # Use only the two most common capacity types.
+        - key: "karpenter.sh/capacity-type"
+          operator: In
+          values: ["spot"]
+  limits:
+    cpu: "500"
+    memory: 500Gi
+  weight: 10
