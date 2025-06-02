@@ -1,4 +1,5 @@
 resource "null_resource" "patch_aws_nodes" {
+  count = var.cillium.enabled ? 1 : 0
   triggers = {
     eks_name = aws_eks_cluster.cluster.name
   }
@@ -16,6 +17,7 @@ resource "null_resource" "patch_aws_nodes" {
 }
 
 resource "helm_release" "cillium" {
+  count      = var.cillium.enabled ? 1 : 0
   name       = "cilium"
   chart      = "cilium"
   repository = var.cillium.chart_repository

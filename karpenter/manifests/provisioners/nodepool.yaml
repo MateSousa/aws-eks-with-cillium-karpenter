@@ -9,13 +9,7 @@ spec:
         billing-team: my-team
       annotations:
         example.com/owner: "my-team"
-    disruption:
-      consolidationPolicy: WhenEmptyOrUnderutilized
     spec:
-      startupTaints:
-        - key: "node.cilium.io/agent-not-ready"
-          value: "true"
-          effect: "NoExecute"
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass

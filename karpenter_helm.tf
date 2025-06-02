@@ -41,6 +41,7 @@ resource "helm_release" "karpenter_eks" {
 
   depends_on = [
     aws_iam_role.karpenter_controller,
+    aws_eks_addon.pod_identity_agent_addon,
     aws_iam_role_policy_attachment.karpenter_controller_policy_attachment,
     aws_iam_role_policy_attachment.karpenter_ssm_policy,
     aws_iam_instance_profile.karpenter,

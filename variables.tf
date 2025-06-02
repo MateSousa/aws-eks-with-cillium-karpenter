@@ -44,6 +44,13 @@ variable "eks_addons" {
       configuration_values        = ""
       pod_identity_association    = null
     }
+    vpc-cni = {
+      version                     = "v1.19.2-eksbuild.1"
+      resolve_conflicts_on_update = "OVERWRITE"
+      resolve_conflicts_on_create = "OVERWRITE"
+      configuration_values        = ""
+      pod_identity_association    = null
+    }
   }
 }
 
@@ -97,11 +104,6 @@ variable "node_groups" {
         "karpenter.sh/controller" = "true"
       }
       taints = [
-        {
-          key    = "node.cilium.io/agent-not-ready"
-          value  = "true"
-          effect = "NO_EXECUTE"
-        }
       ]
     }
   }
@@ -174,6 +176,7 @@ variable "karpenter_queue" {
 variable "cillium" {
   description = "Cilium configuration"
   type = object({
+    enabled           = bool
     chart_repository  = string
     namespace         = string
     version           = string
@@ -182,6 +185,7 @@ variable "cillium" {
     sets              = map(string)
   })
   default = {
+    enabled           = false
     chart_repository  = "https://helm.cilium.io/"
     namespace         = "kube-system"
     version           = "1.17.2"
@@ -196,3 +200,35 @@ variable "cillium" {
   }
 }
 
+variable "argocd_rollouts_chart_version" {
+  description = "Version of the ArgoCD Rollouts chart"
+  type        = string
+  default     = "2.39.5"
+}
+
+variable "argocd_rollouts_set" {
+  description = "Set values for the ArgoCD Rollouts chart"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
+
+variable "enable_argocd_rollouts_dashboard" {
+  description = "Flag to enable ArgoCD Rollouts dashboard"
+  type        = bool
+  default     = true
+}
+
+variable "metrics_server_version" {
+  description = "Version of the Metrics Server Helm chart"
+  type        = string
+  default     = "3.12.2"
+}
+
+variable "csi_driver_ebs_version" {
+  description = "Version of the EBS CSI Driver Helm chart"
+  type        = string
+  default     = "2.44.0"
+}
