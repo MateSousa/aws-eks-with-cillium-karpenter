@@ -11,6 +11,7 @@ spec:
   securityGroupSelectorTerms:
     - tags:
         karpenter.sh/discovery: ${cluster_name}
+        kubernetes.io/cluster/${cluster_name}: owned
   tags:
     karpenter.sh/discovery: ${cluster_name}
   amiSelectorTerms:

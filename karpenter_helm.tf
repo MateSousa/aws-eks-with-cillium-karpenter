@@ -46,6 +46,10 @@ resource "helm_release" "karpenter_eks" {
     aws_iam_role_policy_attachment.karpenter_ssm_policy,
     aws_iam_instance_profile.karpenter,
   ]
+
+  lifecycle {
+    ignore_changes = [repository_password]
+  }
 }
 
 resource "aws_eks_access_entry" "karpenter_access" {

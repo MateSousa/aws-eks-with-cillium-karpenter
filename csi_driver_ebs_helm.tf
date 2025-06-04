@@ -1,5 +1,5 @@
 resource "aws_iam_role" "csi_driver_ebs" {
-  name               = "csi-driver-ebs-${var.eks_cluster_name}"
+  name               = "csi-driver-ebs-${var.eks.name}"
   assume_role_policy = data.aws_iam_policy_document.csi_driver_ebs_pod_identity_association.json
 }
 
@@ -25,13 +25,14 @@ data "aws_iam_policy_document" "csi_driver_ebs_pod_identity_association" {
 }
 
 resource "aws_eks_pod_identity_association" "csi_driver_ebs_pods_identity_association" {
-  cluster_name    = var.eks_cluster_name
+  cluster_name    = var.eks.name
   namespace       = "kube-system"
   service_account = "ebs-csi-controller-sa"
   role_arn        = aws_iam_role.csi_driver_ebs.arn
 
   depends_on = [
     aws_iam_role_policy_attachment.csi_driver_ebs_policy_attachment,
+    aws_eks_cluster.cluster
   ]
 }
 
@@ -40,6 +41,7 @@ resource "helm_release" "csi_driver_ebs" {
   repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
   chart      = "aws-ebs-csi-driver"
   version    = var.csi_driver_ebs_version
+  namespace  = "kube-system"
 
   depends_on = [
     aws_eks_cluster.cluster,
