@@ -5,7 +5,7 @@ resource "aws_eks_cluster" "cluster" {
 
   access_config {
     authentication_mode                         = var.eks.authentication_mode                         // Default "API", CONFIG_MAP is deprecated
-    bootstrap_cluster_creator_admin_permissions = var.eks.bootstrap_cluster_creator_admin_permissions // Default false
+    bootstrap_cluster_creator_admin_permissions = var.eks.bootstrap_cluster_creator_admin_permissions // Default true
   }
 
   vpc_config {
